@@ -3,7 +3,7 @@ import heroImg from "../assets/pkmn.jpg";
 
 const Home = () => {
   return (
-    <main className="pt-[6rem]">
+    <main className="w-full">
       <div className="relative w-full">
         <img
           className="w-full h-full object-cover"
@@ -22,7 +22,7 @@ const Home = () => {
         </p>
         
         <div>
-            <button className="text-white text-2xl bg-red-700 p-4 rounded-[5px] hover:scale-[1.2] transition-all duration-250 active:scale-[1]">
+            <button className="text-white text-2xl bg-red-700 p-4 rounded-[5px] hover:scale-[1.2] active:bg-blue-700 transition-all duration-250 active:scale-[1]">
             Shop Now
             </button>
         </div>
