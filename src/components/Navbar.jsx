@@ -9,7 +9,7 @@ const Navbar = () => {
         <ul className='flex text-xl gap-8'>
             <li className={listStyle}><Link to='/'>Home</Link></li>
             <li className={listStyle}><Link to=''>Blog</Link></li>
-            <li className={listStyle}><Link to=''>Product</Link></li>
+            <li className={listStyle}><Link to='/Product'>Product</Link></li>
             <li className={listStyle}><Link to='/About_Us'>About Us</Link></li>
         </ul>
     </nav>

@@ -1,5 +1,7 @@
 import React from "react";
 import heroImg from "../assets/pkmn.jpg";
+import { Link } from 'react-router-dom';
+
 
 const Home = () => {
   return (
@@ -23,7 +25,7 @@ const Home = () => {
         
         <div>
             <button className="text-white text-2xl bg-red-700 p-4 rounded-[5px] hover:scale-[1.2] active:bg-blue-700 transition-all duration-250 active:scale-[1]">
-            Shop Now
+            <Link to='/Product'> Shop Now </Link>
             </button>
         </div>
       </div>
