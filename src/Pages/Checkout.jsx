@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-
+import qr from '../assets/qr_code.jpg';
 const Checkout = () => {
   const { state } = useLocation();
   const { id, model, price, quantity } = state || {};
@@ -14,7 +14,7 @@ const Checkout = () => {
       <p><strong>Quantity:</strong> {quantity}</p>
       <p><strong>Total Price:</strong> ${(price * quantity).toFixed(2)}</p>
 
-      <button className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-400">
+      <button onClick={() => confirm('Proceed with the transation?')} className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-400">
         Proceed to Payment
       </button>
     </div>
