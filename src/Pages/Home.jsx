@@ -14,7 +14,7 @@ const Home = () => {
         />
       </div>
       <div className="absolute overflow-hidden inset-0 flex justify-center items-center text-center flex-col">
-        <h1 className="text-8xl font-bold p-6 bg-gradient-to-r from-red-600 to-pink-500 bg-clip-text text-transparent" id="fontStyle">
+        <h1 className="text-8xl font-bold p-6 bg-gradient-to-r from-gray-500 to-white bg-clip-text text-transparent" id="fontStyle">
           Your Perfect Watch, <br />
           Your Perfect Style
         </h1>
