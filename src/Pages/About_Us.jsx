@@ -1,8 +1,8 @@
 import React from 'react'
 import TeamCard from '../components/TeamCard';
 import pras from '../assets/pras1.jpg';
-import suyog from '../assets/suyog1.jpg';
-import bed from '../assets/bed.jpg';
+import suyog from '../assets/suyog.jpg';
+import bed from '../assets/bed1.jpg';
 import sushan from '../assets/sushan1.jpg';
 
 const About_Us = () => {

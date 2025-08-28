@@ -19,12 +19,12 @@ import Gshock11 from '../assets/product/GMAS110ST-2A.avif';
 import Gshock12 from '../assets/product/MTGB2000YST1.avif';
 
 const watches = [
-    {model: 'Baby-G', id: 'BA110AH-4A', price: '$130.00', img: babyG},
-    {model: 'Baby-G', id: 'BA110AH-6A', price: '$130.00', img: babyG1},
-    {model: 'Baby-G', id: 'BA110AH-9A', price: '$130.00', img: babyG2},
-    {model: 'G-Shock', id: 'GA010GB-1A9', price: '$130.00', img: Gshock},
-    {model: 'G-Shock', id: 'GA010GGB-1A9', price: '$150.00', img: Gshock1},
-    {model: 'G-Shock', id: 'GA100GGB-1A9', price: '$130.00', img: Gshock2},
+    {model: 'Baby-G', id: 'BA110AH-4A', price: '$130.00', img: babyG, stock: 20},
+    {model: 'Baby-G', id: 'BA110AH-6A', price: '$130.00', img: babyG1, stock: 23},
+    {model: 'Baby-G', id: 'BA110AH-9A', price: '$130.00', img: babyG2, stock: 42},
+    {model: 'G-Shock', id: 'GA010GB-1A9', price: '$130.00', img: Gshock, stock: 8},
+    {model: 'G-Shock', id: 'GA010GGB-1A9', price: '$150.00', img: Gshock1, stock: 10},
+    {model: 'G-Shock', id: 'GA100GGB-1A9', price: '$130.00', img: Gshock2, stock: 15},
     {model: 'G-Shock', id: 'GD010GB-1A9', price: '$110.00', img: Gshock3},
     {model: 'G-Shock', id: 'GMAP2100PC4A', price: '$110.00', img: Gshock4},
     {model: 'G-Shock', id: 'MTGB40001A', price: '$1250.00', img: Gshock5},
@@ -47,6 +47,7 @@ const Product = () => {
                 img={watch.img}
                 id={watch.id}
                 price={watch.price}
+                stock={watch.stock}
             />
         )}
     </div>
