@@ -1,0 +1,114 @@
+[
+  {
+    "id": "BA110AH-4A",
+    "model": "Baby-G",
+    "price": "$130.00",
+    "stock": 20,
+    "img": "/assets/product/image.avif"
+  },
+  {
+    "id": "BA110AH-6A",
+    "model": "Baby-G",
+    "price": "$130.00",
+    "stock": 23,
+    "img": "/assets/product/BA110AH-6A.avif"
+  },
+  {
+    "id": "BA110AH-9A",
+    "model": "Baby-G",
+    "price": "$130.00",
+    "stock": 42,
+    "img": "/assets/product/BA110AH-9A.avif"
+  },
+  {
+    "id": "GA010GB-1A9",
+    "model": "G-Shock",
+    "price": "$130.00",
+    "stock": 8,
+    "img": "/assets/product/GA010GB-1A9.avif"
+  },
+  {
+    "id": "GA010GGB-1A9",
+    "model": "G-Shock",
+    "price": "$150.00",
+    "stock": 10,
+    "img": "/assets/product/GA010GGB-1A9.avif"
+  },
+  {
+    "id": "GA100GGB-1A9",
+    "model": "G-Shock",
+    "price": "$130.00",
+    "stock": 15,
+    "img": "/assets/product/GA010GGB-1A9.avif"
+  },
+  {
+    "id": "GD010GB-1A9",
+    "model": "G-Shock",
+    "price": "$110.00",
+    "stock": 15,
+    "img": "/assets/product/GD010GB-1A9.avif"
+  },
+  {
+    "id": "GMAP2100PC4A",
+    "model": "G-Shock",
+    "price": "$110.00",
+    "stock": 15,
+    "img": "/assets/product/GMAP2100PC4A.avif"
+  },
+  {
+    "id": "MTGB40001A",
+    "model": "G-Shock",
+    "price": "$1250.00",
+    "stock": 15,
+    "img": "/assets/product/MTGB40001A.avif"
+  },
+  {
+    "id": "GBX100S-1",
+    "model": "G-Shock",
+    "price": "$170.00",
+    "stock": 15,
+    "img": "/assets/product/GBX100S-1.avif"
+  },
+  {
+    "id": "GMAP2100M-4A",
+    "model": "G-Shock",
+    "price": "$99.00",
+    "stock": 15,
+    "img": "/assets/product/GMAP2100M-4A.avif"
+  },
+  {
+    "id": "GA110HDS-7A",
+    "model": "G-Shock",
+    "price": "$140",
+    "stock": 15,
+    "img": "/assets/product/GA110HDS-7A.avif"
+  },
+  {
+    "id": "GPRH1000RY1A",
+    "model": "G-Shock",
+    "price": "$500.00",
+    "stock": 15,
+    "img": "/assets/product/GPRH1000RY1A.avif"
+  },
+  {
+    "id": "MRGB2100R-2A",
+    "model": "G-Shock",
+    "price": "$3,800.00",
+    "stock": 15,
+    "img": "/assets/product/MRGB2100R-2A.avif"
+  },
+  {
+    "id": "GMAS110ST-2A",
+    "model": "G-Shock",
+    "price": "$140.00",
+    "stock": 15,
+    "img": "/assets/product/GMAS110ST-2A.avif"
+  },
+  {
+    "id": "MTGB2000YST1",
+    "model": "G-Shock",
+    "price": "$1450.00",
+    "stock": 15,
+    "img": "/assets/product/MTGB2000YST1.avif"
+  }
+]
