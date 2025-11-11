@@ -4,7 +4,7 @@
     "model": "Baby-G",
     "price": "$130.00",
     "stock": 20,
-    "img": "/assets/product/image.avif"
+    "img": "react_watch/blob/main/public/assets/product/image.avif"
   },
   {
     "id": "BA110AH-6A",
