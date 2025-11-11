@@ -15,7 +15,6 @@ const WatchCard = ({ model, img, id, price, stock }) => {
   };
 
   const handleBuyNow = () => {
-    // Redirect to checkout page with item info in state
     navigate('/checkout', { state: { id, model, price: numericPrice, quantity } });
   };
 

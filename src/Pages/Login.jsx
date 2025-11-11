@@ -10,15 +10,13 @@ const Login = () => {
     e.preventDefault();
     const users = JSON.parse(localStorage.getItem('users')) || [];
 
-    // Hardcoded admin check
     if (email === 'admin@example.com' && password === 'admin123') {
       alert('Admin login successful!');
       localStorage.setItem('loggedInUser', JSON.stringify({ email, isAdmin: true }));
-      navigate('/admin'); // redirect to admin panel
+      navigate('/admin');
       return;
     }
 
-    // Normal user check
     const user = users.find(
       (user) => user.email === email && user.password === password
     );
@@ -26,7 +24,7 @@ const Login = () => {
     if (user) {
       alert('Login successful!');
       localStorage.setItem('loggedInUser', JSON.stringify(user));
-      navigate('/'); // redirect to homepage or checkout
+      navigate('/');
     } else {
       alert('Invalid email or password');
     }
