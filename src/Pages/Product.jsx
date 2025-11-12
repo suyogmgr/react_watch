@@ -7,8 +7,6 @@ const Product = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem('watches');
-    console.log('Stored watches:', stored);
-    console.log('Default watches:', defaultWatches);
     setWatches(stored ? JSON.parse(stored) : defaultWatches);
   }, []);
 

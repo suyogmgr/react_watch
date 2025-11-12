@@ -18,7 +18,7 @@ const Home = () => {
           Your Perfect Watch, <br />
           Your Perfect Style
         </h1>
-        <p className="text-white font-bold text-2xl py-8" id="fontStyle">
+        <p className="text-white font-bold text-2xl py-8">
           Discover the perfect balance of elegence and precision with our
           exclusive collection of timeless watches.
         </p>
