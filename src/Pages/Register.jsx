@@ -10,6 +10,11 @@ const Register = () => {
   const handleRegister = (e) => {
     e.preventDefault();
 
+    if (password.length < 8) {
+      alert("Password must be at least 8 characters!");
+      return;
+    }
+
     if (password !== confirmPass) {
       alert("Passwords do not match!");
       return;
@@ -52,9 +57,11 @@ const Register = () => {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+          className="w-full border border-gray-300 rounded px-3 py-2 mb-1"
+          minLength={8}
           required
         />
+        <p className="text-xs text-gray-400 mb-4">At least 8 characters</p>
 
         <label className="block mb-2 font-semibold">Confirm Password:</label>
         <input
@@ -62,6 +69,7 @@ const Register = () => {
           value={confirmPass}
           onChange={(e) => setConfirmPass(e.target.value)}
           className="w-full border border-gray-300 rounded px-3 py-2 mb-6"
+          minLength={8}
           required
         />
 

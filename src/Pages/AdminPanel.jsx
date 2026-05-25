@@ -22,16 +22,22 @@ const AdminPanel = () => {
   const [editEmail, setEditEmail] = useState('');
   const [editPassword, setEditPassword] = useState('');
 
+  // ORDERS
+  const [orders, setOrders] = useState([]);
+
   // PRODUCTS
   const [watches, setWatches] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingWatch, setEditingWatch] = useState(null);
-  const [activeTab, setActiveTab] = useState('users');
+  const [activeTab, setActiveTab] = useState('orders');
 
   // LOAD DATA
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem('users')) || [];
     setUsers(u);
+
+    const o = JSON.parse(localStorage.getItem('orders')) || [];
+    setOrders(o);
 
     const w = JSON.parse(localStorage.getItem('watches')) || defaultWatches;
     setWatches(w);
@@ -88,11 +94,29 @@ const AdminPanel = () => {
     setEditingWatch(null);
   };
 
+  // ORDER CRUD
+  const verifyOrder = (i) => {
+    const updated = orders.map((o, idx) => idx === i ? { ...o, status: 'completed' } : o);
+    setOrders(updated);
+    localStorage.setItem('orders', JSON.stringify(updated));
+  };
+  const deleteOrder = (i) => {
+    const updated = orders.filter((_, idx) => idx !== i);
+    setOrders(updated);
+    localStorage.setItem('orders', JSON.stringify(updated));
+  };
+
   return (
     <div className="p-10 min-h-screen bg-gray-100">
       <h1 className="text-3xl font-bold mb-6 text-center">Admin Panel</h1>
 
       <div className="flex gap-4 mb-6 justify-center">
+        <button
+          onClick={() => setActiveTab('orders')}
+          className={`px-6 py-2 rounded ${activeTab === 'orders' ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
+        >
+          Orders {orders.filter(o => o.status === 'pending').length > 0 && `(${orders.filter(o => o.status === 'pending').length})`}
+        </button>
         <button
           onClick={() => setActiveTab('users')}
           className={`px-6 py-2 rounded ${activeTab === 'users' ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
@@ -106,6 +130,57 @@ const AdminPanel = () => {
           Products
         </button>
       </div>
+
+      {/* ORDERS TAB */}
+      {activeTab === 'orders' && (
+        <div>
+          {orders.length === 0 ? (
+            <p className="text-center text-gray-400 py-10">No orders yet.</p>
+          ) : (
+            <table className="w-full border-collapse border border-gray-400 text-left">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border border-gray-400 px-4 py-2">#</th>
+                  <th className="border border-gray-400 px-4 py-2">Model</th>
+                  <th className="border border-gray-400 px-4 py-2">ID</th>
+                  <th className="border border-gray-400 px-4 py-2">Qty</th>
+                  <th className="border border-gray-400 px-4 py-2">Total</th>
+                  <th className="border border-gray-400 px-4 py-2">Date</th>
+                  <th className="border border-gray-400 px-4 py-2">Status</th>
+                  <th className="border border-gray-400 px-4 py-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((o, i) => (
+                  <tr key={i} className="odd:bg-white even:bg-gray-100">
+                    <td className="border border-gray-400 px-4 py-2">{i + 1}</td>
+                    <td className="border border-gray-400 px-4 py-2">{o.model}</td>
+                    <td className="border border-gray-400 px-4 py-2">{o.id}</td>
+                    <td className="border border-gray-400 px-4 py-2">{o.quantity}</td>
+                    <td className="border border-gray-400 px-4 py-2">${o.total}</td>
+                    <td className="border border-gray-400 px-4 py-2 text-sm">{new Date(o.orderedAt).toLocaleDateString()}</td>
+                    <td className="border border-gray-400 px-4 py-2">
+                      <span className={`px-3 py-1 rounded text-sm font-medium ${o.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                        {o.status}
+                      </span>
+                    </td>
+                    <td className="border border-gray-400 px-4 py-2 flex gap-2">
+                      {o.status === 'pending' && (
+                        <button onClick={() => verifyOrder(i)} className="bg-green-600 text-white px-3 py-1 rounded">
+                          Verify
+                        </button>
+                      )}
+                      <button onClick={() => deleteOrder(i)} className="bg-red-600 text-white px-3 py-1 rounded">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
 
       {/* USERS TAB */}
       {activeTab === 'users' && (
@@ -223,7 +298,7 @@ const AdminPanel = () => {
                 {watches.map((w, i) => (
                   <tr key={w.id} className="odd:bg-white even:bg-gray-50">
                     <td className="border border-gray-400 p-2">
-                      <img src={w.img} alt={w.id} className="h-16 w-16 object-cover rounded" />
+                      <img src={w.img.startsWith('data:') ? w.img : import.meta.env.BASE_URL.replace(/\/+$/, '') + '/' + w.img.replace(/^\//, '')} alt={w.id} className="h-16 w-16 object-cover rounded" />
                     </td>
                     <td className="border border-gray-400 px-4 py-2">{w.model}</td>
                     <td className="border border-gray-400 px-4 py-2">{w.id}</td>

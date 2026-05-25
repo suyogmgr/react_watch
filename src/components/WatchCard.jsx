@@ -6,6 +6,7 @@ const WatchCard = ({ model, img, id, price, stock }) => {
   const [quantity, setQuantity] = useState(1);
 
   const numericPrice = parseFloat(price.replace(/[$,]/g, ''));
+  const imgSrc = img.startsWith('data:') ? img : import.meta.env.BASE_URL.replace(/\/+$/, '') + '/' + img.replace(/^\//, '');
 
   const handleChange = (e) => {
     let value = parseInt(e.target.value) || 1;
@@ -19,48 +20,68 @@ const WatchCard = ({ model, img, id, price, stock }) => {
   };
 
   return (
-    <div className="bg-white transition duration-200 ease-in-out p-4 rounded shadow-md">
-      <img src={img} alt={id} className="object-cover h-80 w-80 bg-cyan-100 mb-2" />
-      <div className="p-2">
-        <p className="uppercase">{model}</p>
-        <p className="font-bold text-2xl">{id}</p>
-        <p className="text-xl">${(numericPrice * quantity).toFixed(2)}</p>
-        <p>{stock === 0 ? "Sold Out" : `${stock} in Stock`}</p>
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group flex flex-col">
+      <div className="relative overflow-hidden bg-gray-100 aspect-square">
+        <img
+          src={imgSrc}
+          alt={id}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        {stock <= 5 && stock > 0 && (
+          <span className="absolute top-3 left-3 bg-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+            Only {stock} left
+          </span>
+        )}
+        {stock === 0 && (
+          <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+            Sold Out
+          </span>
+        )}
+        <span className="absolute top-3 right-3 bg-white/90 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full">
+          {model}
+        </span>
+      </div>
 
-        <div className="flex items-center gap-2 my-2">
-          <button
-            onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
-            disabled={stock === 0}
-            className="bg-black text-white px-3 py-1 rounded hover:bg-green-400 hover:text-black transition"
-          >
-            -
-          </button>
+      <div className="p-5 flex flex-col flex-1">
+        <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{id}</p>
+        <h3 className="text-lg font-bold text-gray-900 mb-1">{model}</h3>
+        <p className="text-2xl font-bold text-blue-600 mb-3">${(numericPrice * quantity).toFixed(2)}</p>
 
-          <input
-            type="number"
-            value={quantity}
-            onChange={handleChange}
-            min="1"
-            max={stock}
-            disabled={stock === 0}
-            className="w-16 text-center border rounded"
-          />
-
-          <button
-            onClick={() => setQuantity(quantity < stock ? quantity + 1 : stock)}
-            disabled={stock === 0}
-            className="bg-black text-white px-3 py-1 rounded hover:bg-green-400 hover:text-black transition"
-          >
-            +
-          </button>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center border border-gray-200 rounded-lg">
+            <button
+              onClick={() => setQuantity(q => Math.max(1, q - 1))}
+              disabled={stock === 0}
+              className="px-3 py-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-30 transition"
+            >
+              -
+            </button>
+            <input
+              type="number"
+              value={quantity}
+              onChange={handleChange}
+              min="1"
+              max={stock}
+              disabled={stock === 0}
+              className="w-12 text-center border-x border-gray-200 py-1.5 text-sm font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <button
+              onClick={() => setQuantity(q => Math.min(stock, q + 1))}
+              disabled={stock === 0}
+              className="px-3 py-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-30 transition"
+            >
+              +
+            </button>
+          </div>
+          <span className="text-sm text-gray-400">{stock} in stock</span>
         </div>
 
         <button
           onClick={handleBuyNow}
           disabled={stock === 0}
-          className="bg-blue-600 text-white w-full p-2 rounded hover:bg-blue-400 transition"
+          className="mt-auto w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition-all hover:shadow-md active:scale-[0.98]"
         >
-          Buy Now
+          {stock === 0 ? 'Unavailable' : 'Buy Now'}
         </button>
       </div>
     </div>

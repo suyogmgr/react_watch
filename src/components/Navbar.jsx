@@ -18,7 +18,7 @@ const Navbar = () => {
 
   return (
     <nav className="flex justify-between items-center h-[6rem] px-6 bg-[#0c0a0a] text-white sticky top-0 z-50 w-full">
-      <h1 className="text-3xl font-bold">MyWebsite</h1>
+      <h1 className="text-3xl font-bold">E-Watches</h1>
 
       <ul className="flex items-center text-xl gap-8">
         <li className={listStyle}>
@@ -32,14 +32,9 @@ const Navbar = () => {
         </li>
 
         {!user && (
-          <>
-            <li className={listStyle}>
-              <Link to="/Register">Register</Link>
-            </li>
-            <li className={listStyle}>
-              <Link to="/Login">Login</Link>
-            </li>
-          </>
+          <li className={listStyle}>
+            <Link to="/Login">Login</Link>
+          </li>
         )}
 
         {user && (
