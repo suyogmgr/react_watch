@@ -137,47 +137,51 @@ const AdminPanel = () => {
           {orders.length === 0 ? (
             <p className="text-center text-gray-400 py-10">No orders yet.</p>
           ) : (
-            <table className="w-full border-collapse border border-gray-400 text-left">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="border border-gray-400 px-4 py-2">#</th>
-                  <th className="border border-gray-400 px-4 py-2">Model</th>
-                  <th className="border border-gray-400 px-4 py-2">ID</th>
-                  <th className="border border-gray-400 px-4 py-2">Qty</th>
-                  <th className="border border-gray-400 px-4 py-2">Total</th>
-                  <th className="border border-gray-400 px-4 py-2">Date</th>
-                  <th className="border border-gray-400 px-4 py-2">Status</th>
-                  <th className="border border-gray-400 px-4 py-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((o, i) => (
-                  <tr key={i} className="odd:bg-white even:bg-gray-100">
-                    <td className="border border-gray-400 px-4 py-2">{i + 1}</td>
-                    <td className="border border-gray-400 px-4 py-2">{o.model}</td>
-                    <td className="border border-gray-400 px-4 py-2">{o.id}</td>
-                    <td className="border border-gray-400 px-4 py-2">{o.quantity}</td>
-                    <td className="border border-gray-400 px-4 py-2">${o.total}</td>
-                    <td className="border border-gray-400 px-4 py-2 text-sm">{new Date(o.orderedAt).toLocaleDateString()}</td>
-                    <td className="border border-gray-400 px-4 py-2">
-                      <span className={`px-3 py-1 rounded text-sm font-medium ${o.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                        {o.status}
-                      </span>
-                    </td>
-                    <td className="border border-gray-400 px-4 py-2 flex gap-2">
-                      {o.status === 'pending' && (
-                        <button onClick={() => verifyOrder(i)} className="bg-green-600 text-white px-3 py-1 rounded">
-                          Verify
+            <div className="space-y-4">
+              {orders.map((o, i) => (
+                <div key={i} className={`bg-white rounded-xl shadow-sm border-l-4 ${o.status === 'completed' ? 'border-l-green-500' : 'border-l-yellow-500'}`}>
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${o.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                          {o.status === 'completed' ? 'Completed' : 'Pending'}
+                        </span>
+                        <span className="text-xs text-gray-400 ml-3">{new Date(o.orderedAt).toLocaleString()}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        {o.status === 'pending' && (
+                          <button onClick={() => verifyOrder(i)} className="bg-green-600 hover:bg-green-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-all">
+                            Verify
+                          </button>
+                        )}
+                        <button onClick={() => deleteOrder(i)} className="bg-red-600 hover:bg-red-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-all">
+                          Delete
                         </button>
-                      )}
-                      <button onClick={() => deleteOrder(i)} className="bg-red-600 text-white px-3 py-1 rounded">
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Customer</p>
+                        <p className="font-semibold text-gray-900">{o.name}</p>
+                        <p className="text-sm text-gray-600">{o.email}</p>
+                        <p className="text-sm text-gray-600">{o.phone}</p>
+                        <p className="text-sm text-gray-500 mt-1">{o.address}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Product</p>
+                        <p className="font-semibold text-gray-900">{o.productModel || o.model}</p>
+                        <p className="text-sm text-gray-500">ID: {o.productId || o.id}</p>
+                        <div className="flex justify-between text-sm text-gray-600 mt-1">
+                          <span>Qty: {o.quantity}</span>
+                          <span className="font-semibold text-gray-900">Rs. {Math.round(Number(o.total)).toLocaleString('en-IN')}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}

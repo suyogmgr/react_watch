@@ -5,7 +5,7 @@ const WatchCard = ({ model, img, id, price, stock }) => {
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
 
-  const numericPrice = parseFloat(price.replace(/[$,]/g, ''));
+  const numericPrice = parseFloat(price.replace(/Rs\.\s*/gi, '').replace(/,/g, ''));
   const imgSrc = img.startsWith('data:') ? img : import.meta.env.BASE_URL.replace(/\/+$/, '') + '/' + img.replace(/^\//, '');
 
   const handleChange = (e) => {
@@ -45,7 +45,7 @@ const WatchCard = ({ model, img, id, price, stock }) => {
       <div className="p-5 flex flex-col flex-1">
         <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">{id}</p>
         <h3 className="text-lg font-bold text-gray-900 mb-1">{model}</h3>
-        <p className="text-2xl font-bold text-blue-600 mb-3">${(numericPrice * quantity).toFixed(2)}</p>
+        <p className="text-2xl font-bold text-blue-600 mb-3">Rs. {(numericPrice * quantity).toLocaleString('en-IN')}</p>
 
         <div className="flex items-center gap-3 mb-4">
           <div className="flex items-center border border-gray-200 rounded-lg">

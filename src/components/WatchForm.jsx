@@ -53,7 +53,7 @@ const WatchForm = ({ watch, onSave, onCancel }) => {
       />
       <input
         name="price"
-        placeholder="Price (e.g. $130.00)"
+        placeholder="Price (e.g. Rs. 16900)"
         value={form.price}
         onChange={handleChange}
         required
