@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const WatchCard = ({ model, img, id, price, stock }) => {
-  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
 
   const numericPrice = parseFloat(price.replace(/Rs\.\s*/gi, '').replace(/,/g, ''));
   const imgSrc = img.startsWith('data:') ? img : import.meta.env.BASE_URL.replace(/\/+$/, '') + '/' + img.replace(/^\//, '');
@@ -15,8 +14,18 @@ const WatchCard = ({ model, img, id, price, stock }) => {
     setQuantity(value);
   };
 
-  const handleBuyNow = () => {
-    navigate('/checkout', { state: { id, model, price: numericPrice, quantity } });
+  const addToCart = () => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const idx = cart.findIndex(i => i.id === id);
+    if (idx !== -1) {
+      cart[idx].quantity = Math.min(cart[idx].quantity + quantity, stock);
+    } else {
+      cart.push({ id, model, price, quantity, stock, img });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cart-updated"));
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
   };
 
   return (
@@ -77,11 +86,13 @@ const WatchCard = ({ model, img, id, price, stock }) => {
         </div>
 
         <button
-          onClick={handleBuyNow}
+          onClick={addToCart}
           disabled={stock === 0}
-          className="mt-auto w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition-all hover:shadow-md active:scale-[0.98]"
+          className={`mt-auto w-full py-3 rounded-lg font-semibold transition-all active:scale-[0.98] ${
+            added ? 'bg-green-500 text-white' : stock === 0 ? 'bg-gray-300 cursor-not-allowed text-gray-500' : 'bg-blue-600 hover:bg-blue-500 text-white hover:shadow-md'
+          }`}
         >
-          {stock === 0 ? 'Unavailable' : 'Buy Now'}
+          {stock === 0 ? 'Unavailable' : added ? 'Added!' : 'Add to Cart'}
         </button>
       </div>
     </div>

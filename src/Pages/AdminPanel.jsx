@@ -95,6 +95,8 @@ const AdminPanel = () => {
   };
 
   // ORDER CRUD
+  const [orderFilter, setOrderFilter] = useState('all');
+
   const verifyOrder = (i) => {
     const updated = orders.map((o, idx) => idx === i ? { ...o, status: 'completed' } : o);
     setOrders(updated);
@@ -106,81 +108,153 @@ const AdminPanel = () => {
     localStorage.setItem('orders', JSON.stringify(updated));
   };
 
+  const filteredOrders = orderFilter === 'all' ? orders : orders.filter(o => o.status === orderFilter);
+  const pendingCount = orders.filter(o => o.status === 'pending').length;
+
   return (
     <div className="p-10 min-h-screen bg-gray-100">
       <h1 className="text-3xl font-bold mb-6 text-center">Admin Panel</h1>
 
-      <div className="flex gap-4 mb-6 justify-center">
-        <button
-          onClick={() => setActiveTab('orders')}
-          className={`px-6 py-2 rounded ${activeTab === 'orders' ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
-        >
-          Orders {orders.filter(o => o.status === 'pending').length > 0 && `(${orders.filter(o => o.status === 'pending').length})`}
-        </button>
-        <button
-          onClick={() => setActiveTab('users')}
-          className={`px-6 py-2 rounded ${activeTab === 'users' ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
-        >
-          Users
-        </button>
-        <button
-          onClick={() => setActiveTab('products')}
-          className={`px-6 py-2 rounded ${activeTab === 'products' ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}
-        >
-          Products
-        </button>
+      <div className="flex gap-3 mb-8 justify-center">
+        {['orders', 'users', 'products'].map(tab => (
+          <button key={tab} onClick={() => setActiveTab(tab)}
+            className={`relative px-6 py-2.5 rounded-lg font-medium text-sm transition-all ${
+              activeTab === tab
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300 hover:text-blue-600'
+            }`}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {tab === 'orders' && pendingCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{pendingCount}</span>
+            )}
+          </button>
+        ))}
       </div>
 
       {/* ORDERS TAB */}
       {activeTab === 'orders' && (
-        <div>
-          {orders.length === 0 ? (
-            <p className="text-center text-gray-400 py-10">No orders yet.</p>
+        <div className="max-w-5xl mx-auto">
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            {[
+              { label: 'Total Orders', count: orders.length, color: 'bg-blue-50 text-blue-700 border-blue-200' },
+              { label: 'Pending', count: pendingCount, color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+              { label: 'Completed', count: orders.filter(o => o.status === 'completed').length, color: 'bg-green-50 text-green-700 border-green-200' },
+            ].map(s => (
+              <div key={s.label} className={`${s.color} border rounded-xl p-4 text-center`}>
+                <p className="text-2xl font-bold">{s.count}</p>
+                <p className="text-sm font-medium opacity-80">{s.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Filter */}
+          <div className="flex gap-2 mb-6">
+            {['all', 'pending', 'completed'].map(f => (
+              <button key={f} onClick={() => setOrderFilter(f)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  orderFilter === f
+                    ? 'bg-gray-800 text-white shadow'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-400'
+                }`}
+              >
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {filteredOrders.length === 0 ? (
+            <p className="text-center text-gray-400 py-16 bg-white rounded-xl">No {orderFilter !== 'all' ? orderFilter : ''} orders found.</p>
           ) : (
             <div className="space-y-4">
-              {orders.map((o, i) => (
-                <div key={i} className={`bg-white rounded-xl shadow-sm border-l-4 ${o.status === 'completed' ? 'border-l-green-500' : 'border-l-yellow-500'}`}>
-                  <div className="p-5">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${o.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                          {o.status === 'completed' ? 'Completed' : 'Pending'}
-                        </span>
-                        <span className="text-xs text-gray-400 ml-3">{new Date(o.orderedAt).toLocaleString()}</span>
-                      </div>
-                      <div className="flex gap-2">
-                        {o.status === 'pending' && (
-                          <button onClick={() => verifyOrder(i)} className="bg-green-600 hover:bg-green-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-all">
-                            Verify
-                          </button>
-                        )}
-                        <button onClick={() => deleteOrder(i)} className="bg-red-600 hover:bg-red-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-all">
-                          Delete
-                        </button>
-                      </div>
+              {filteredOrders.map((o, i) => {
+                const realIdx = orders.indexOf(o);
+                return (
+                <div key={i} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                  {/* Header */}
+                  <div className={`px-6 py-4 flex items-center justify-between ${o.status === 'completed' ? 'bg-gradient-to-r from-green-50 to-white' : 'bg-gradient-to-r from-yellow-50 to-white'}`}>
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${o.status === 'completed' ? 'bg-green-500' : 'bg-yellow-500'}`} />
+                      <span className={`px-3 py-0.5 rounded-full text-xs font-semibold ${o.status === 'completed' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}`}>
+                        {o.status === 'completed' ? 'Completed' : 'Pending'}
+                      </span>
+                      <span className="text-xs text-gray-400">{new Date(o.orderedAt).toLocaleString()}</span>
                     </div>
+                    <div className="flex gap-2">
+                      {o.status === 'pending' && (
+                        <button onClick={() => verifyOrder(realIdx)}
+                          className="bg-green-600 hover:bg-green-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-95 flex items-center gap-1.5">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                          Verify
+                        </button>
+                      )}
+                      <button onClick={() => deleteOrder(realIdx)}
+                        className="bg-red-500 hover:bg-red-400 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all active:scale-95 flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        Delete
+                      </button>
+                    </div>
+                  </div>
 
-                    <div className="grid md:grid-cols-2 gap-4">
+                  {/* Body */}
+                  <div className="p-6">
+                    <div className="grid md:grid-cols-3 gap-6">
+                      {/* Customer */}
                       <div>
-                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Customer</p>
+                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                          Customer
+                        </p>
                         <p className="font-semibold text-gray-900">{o.name}</p>
-                        <p className="text-sm text-gray-600">{o.email}</p>
-                        <p className="text-sm text-gray-600">{o.phone}</p>
-                        <p className="text-sm text-gray-500 mt-1">{o.address}</p>
+                        <a href={`mailto:${o.email}`} className="text-sm text-blue-600 hover:underline block">{o.email}</a>
+                        <a href={`tel:${o.phone}`} className="text-sm text-gray-600 block mt-0.5">{o.phone}</a>
+                        <p className="text-sm text-gray-500 mt-2 leading-relaxed">{o.address}</p>
                       </div>
-                      <div>
-                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Product</p>
-                        <p className="font-semibold text-gray-900">{o.productModel || o.model}</p>
-                        <p className="text-sm text-gray-500">ID: {o.productId || o.id}</p>
-                        <div className="flex justify-between text-sm text-gray-600 mt-1">
-                          <span>Qty: {o.quantity}</span>
-                          <span className="font-semibold text-gray-900">Rs. {Math.round(Number(o.total)).toLocaleString('en-IN')}</span>
+
+                      {/* Items */}
+                      <div className="md:col-span-2">
+                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                          {o.items ? 'Items' : 'Product'}
+                        </p>
+                        {o.items ? (
+                          <div className="divide-y divide-gray-100">
+                            {o.items.map((item, j) => (
+                              <div key={j} className="flex justify-between items-center py-2 first:pt-0 last:pb-0">
+                                <div>
+                                  <p className="font-medium text-gray-900">{item.model}</p>
+                                  <p className="text-xs text-gray-400">{item.id} × {item.quantity}</p>
+                                </div>
+                                <span className="font-semibold text-gray-800">Rs. {(parseFloat(String(item.price).replace(/Rs\.\s*/gi, '').replace(/,/g, '')) * item.quantity).toLocaleString('en-IN')}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="font-medium text-gray-900">{o.productModel || o.model}</p>
+                              <p className="text-xs text-gray-400">{o.productId || o.id} × {o.quantity}</p>
+                            </div>
+                            <span className="font-semibold text-gray-800">Rs. {Math.round(Number(o.total)).toLocaleString('en-IN')}</span>
+                          </div>
+                        )}
+
+                        {/* Total & Ref */}
+                        <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                          <div>
+                            {o.refId && <p className="text-xs text-gray-400">Ref: <span className="font-mono">{o.refId}</span></p>}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500">Total</span>
+                            <span className="text-lg font-bold text-gray-900">Rs. {Math.round(Number(o.total)).toLocaleString('en-IN')}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>

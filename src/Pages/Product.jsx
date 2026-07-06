@@ -2,9 +2,19 @@ import React, { useEffect, useState } from 'react';
 import WatchCard from '../components/WatchCard';
 import defaultWatches from '../data/watches.json';
 
+const parsePrice = (p) => parseInt(String(p).replace(/\D/g, "")) || 0;
+
+const SORT_OPTIONS = [
+  { label: "Default", value: "default" },
+  { label: "Price: Low to High", value: "low" },
+  { label: "Price: High to Low", value: "high" },
+  { label: "Best Selling", value: "best" },
+];
+
 const Product = () => {
   const [watches, setWatches] = useState([]);
   const [filter, setFilter] = useState('All');
+  const [sortBy, setSortBy] = useState('default');
 
   useEffect(() => {
     const stored = localStorage.getItem('watches');
@@ -12,7 +22,13 @@ const Product = () => {
   }, []);
 
   const models = ['All', ...new Set(watches.map(w => w.model))];
-  const filtered = filter === 'All' ? watches : watches.filter(w => w.model === filter);
+  let filtered = filter === 'All' ? watches : watches.filter(w => w.model === filter);
+  filtered = [...filtered].sort((a, b) => {
+    if (sortBy === "low") return parsePrice(a.price) - parsePrice(b.price);
+    if (sortBy === "high") return parsePrice(b.price) - parsePrice(a.price);
+    if (sortBy === "best") return (a.stock || 0) - (b.stock || 0);
+    return 0;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -27,8 +43,8 @@ const Product = () => {
         </div>
       </div>
 
-      {/* Filter */}
-      <div className="max-w-7xl mx-auto px-4 pt-8 pb-4">
+      {/* Filter & Sort */}
+      <div className="max-w-7xl mx-auto px-4 pt-8 pb-4 flex flex-wrap gap-3 items-center justify-center">
         <div className="flex flex-wrap gap-3 justify-center">
           {models.map(m => (
             <button
@@ -44,6 +60,13 @@ const Product = () => {
             </button>
           ))}
         </div>
+        <select
+          value={sortBy}
+          onChange={e => setSortBy(e.target.value)}
+          className="ml-auto px-4 py-2 rounded-lg border border-gray-200 text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
       </div>
 
       {/* Grid */}
