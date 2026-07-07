@@ -13,7 +13,7 @@ const Checkout = () => {
   const [checkoutData, setCheckoutData] = useState(null);
   const [toast, setToast] = useState(null);
 
-  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+  const loggedInUser = JSON.parse(sessionStorage.getItem("loggedInUser") || "{}");
   const [customer, setCustomer] = useState({
     name: "",
     email: loggedInUser.email || "",

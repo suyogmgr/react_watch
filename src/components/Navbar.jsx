@@ -9,7 +9,7 @@ const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    const loggedInUser = JSON.parse(sessionStorage.getItem("loggedInUser"));
     setUser(loggedInUser);
   }, []);
 
@@ -24,8 +24,11 @@ const Navbar = () => {
     return () => { window.removeEventListener("storage", update); window.removeEventListener("cart-updated", update); };
   }, []);
 
+  const isAdmin = !!JSON.parse(sessionStorage.getItem("adminLoggedIn"));
+
   const handleLogout = () => {
-    localStorage.removeItem("loggedInUser");
+    sessionStorage.removeItem("loggedInUser");
+    sessionStorage.removeItem("adminLoggedIn");
     setUser(null);
   };
 
@@ -58,7 +61,7 @@ const Navbar = () => {
 
         {user && (
           <>
-            {user.email === "admin@example.com" && (
+            {isAdmin && (
               <li className={listStyle}>
                 <Link to="/admin">Admin Panel</Link>
               </li>

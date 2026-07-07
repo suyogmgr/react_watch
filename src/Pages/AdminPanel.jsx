@@ -9,8 +9,8 @@ const AdminPanel = () => {
 
   // AUTH
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
-    if (!user || user.email !== 'admin@example.com') {
+    const admin = JSON.parse(sessionStorage.getItem('adminLoggedIn'));
+    if (!admin || admin.email !== 'admin@example.com') {
       alert('Access denied!');
       navigate('/login');
     }

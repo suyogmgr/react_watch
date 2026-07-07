@@ -12,7 +12,9 @@ const Login = () => {
 
     if (email === 'admin@example.com' && password === 'admin123') {
       alert('Admin login successful!');
-      localStorage.setItem('loggedInUser', JSON.stringify({ email, isAdmin: true }));
+      const adminData = { email, isAdmin: true };
+      sessionStorage.setItem('loggedInUser', JSON.stringify(adminData));
+      sessionStorage.setItem('adminLoggedIn', JSON.stringify(adminData));
       navigate('/admin');
       return;
     }
@@ -23,7 +25,7 @@ const Login = () => {
 
     if (user) {
       alert('Login successful!');
-      localStorage.setItem('loggedInUser', JSON.stringify(user));
+      sessionStorage.setItem('loggedInUser', JSON.stringify(user));
       navigate('/');
     } else {
       alert('Invalid email or password');
