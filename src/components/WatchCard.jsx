@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getCartKey } from '../utils/cartKey';
 
 const WatchCard = ({ model, img, id, price, stock }) => {
   const [quantity, setQuantity] = useState(1);
@@ -15,14 +16,15 @@ const WatchCard = ({ model, img, id, price, stock }) => {
   };
 
   const addToCart = () => {
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const key = getCartKey();
+    const cart = JSON.parse(localStorage.getItem(key) || "[]");
     const idx = cart.findIndex(i => i.id === id);
     if (idx !== -1) {
       cart[idx].quantity = Math.min(cart[idx].quantity + quantity, stock);
     } else {
       cart.push({ id, model, price, quantity, stock, img });
     }
-    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem(key, JSON.stringify(cart));
     window.dispatchEvent(new Event("cart-updated"));
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);

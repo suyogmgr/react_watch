@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { getCartKey } from "../utils/cartKey";
 
 const listStyle = "hover:text-blue-400 cursor-pointer";
 
@@ -14,7 +15,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const update = () => {
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const cart = JSON.parse(localStorage.getItem(getCartKey()) || "[]");
       setCartCount(cart.reduce((s, i) => s + i.quantity, 0));
     };
     update();

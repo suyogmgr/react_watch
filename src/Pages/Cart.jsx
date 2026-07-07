@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
-const CART_KEY = "cart";
-
-const getCart = () => JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+import { getCartKey } from "../utils/cartKey";
 
 const Cart = () => {
-  const [items, setItems] = useState(getCart);
+  const [items, setItems] = useState(() => JSON.parse(localStorage.getItem(getCartKey()) || "[]"));
 
-  useEffect(() => { localStorage.setItem(CART_KEY, JSON.stringify(items)); }, [items]);
+  useEffect(() => { localStorage.setItem(getCartKey(), JSON.stringify(items)); }, [items]);
 
   const updateQty = (id, qty) => {
     setItems(prev => prev.map(i => i.id === id ? { ...i, quantity: Math.max(1, Math.min(qty, i.stock)) } : i));

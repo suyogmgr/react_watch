@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Toast from "../components/Toast";
+import { getCartKey } from "../utils/cartKey";
 
 const Checkout = () => {
   const location = useLocation();
@@ -9,6 +11,7 @@ const Checkout = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [paymentMessage, setPaymentMessage] = useState("");
   const [checkoutData, setCheckoutData] = useState(null);
+  const [toast, setToast] = useState(null);
 
   const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
   const [customer, setCustomer] = useState({
@@ -44,14 +47,17 @@ const Checkout = () => {
       updateOrder(pidx, txnId, mobile);
       setPaymentMessage(`Payment verified! Ref: ${txnId || pidx}`);
       setOrderPlaced(true);
+      setToast({ message: `Payment confirmed!`, type: "success" });
       sessionStorage.removeItem("lastCheckout");
     } else if (status === "User canceled") {
       setPaymentMessage("Payment was cancelled. Try again.");
       setOrderPlaced(true);
+      setToast({ message: "Payment cancelled.", type: "error" });
       sessionStorage.removeItem("lastCheckout");
     } else if (status) {
       setPaymentMessage(`Payment status: ${status}`);
       setOrderPlaced(true);
+      setToast({ message: `Payment status: ${status}`, type: "error" });
       sessionStorage.removeItem("lastCheckout");
     }
 
@@ -59,6 +65,12 @@ const Checkout = () => {
       navigate("/checkout", { replace: true });
     }
   }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const updateOrder = (pidx, txnId, mobile) => {
     const orders = JSON.parse(localStorage.getItem("orders") || "[]");
@@ -106,29 +118,32 @@ const Checkout = () => {
       });
       const data = await res.json();
       if (data.payment_url) {
-        localStorage.removeItem("cart");
+        localStorage.removeItem(getCartKey());
         window.dispatchEvent(new Event("cart-updated"));
         window.location.href = data.payment_url;
       } else {
-        localStorage.removeItem("cart");
+        localStorage.removeItem(getCartKey());
         window.dispatchEvent(new Event("cart-updated"));
         setPaymentMessage("Order placed! Admin will verify the payment.");
         setOrderPlaced(true);
+        setToast({ message: "Order placed! Awaiting admin verification.", type: "pending" });
         setProcessing(false);
       }
     } catch (err) {
       setPaymentMessage("Failed to reach payment gateway.");
       setOrderPlaced(true);
+      setToast({ message: "Payment gateway error.", type: "error" });
       setProcessing(false);
     }
   };
 
   const handlePayProd = () => {
     saveOrder("pending");
-    localStorage.removeItem("cart");
+    localStorage.removeItem(getCartKey());
     window.dispatchEvent(new Event("cart-updated"));
     setPaymentMessage("Order placed! Admin will verify the payment.");
     setOrderPlaced(true);
+    setToast({ message: "Order placed! Awaiting admin verification.", type: "pending" });
     sessionStorage.setItem("lastCheckout", JSON.stringify({ total: cartTotal, items: orderSummary }));
   };
 
@@ -152,7 +167,12 @@ const Checkout = () => {
   if (orderPlaced || paymentMessage) {
     const displayTotal = checkoutData?.total || cartTotal;
     return (
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="min-h-screen bg-gray-50 py-8 px-4 relative">
+        {toast && (
+          <div className="fixed top-6 right-6 z-[9999]">
+            <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+          </div>
+        )}
         <div className="max-w-md mx-auto bg-white rounded-xl shadow-sm p-10 text-center">
           <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${msgType === "success" ? 'bg-green-100' : msgType === "error" ? 'bg-red-100' : 'bg-yellow-100'}`}>
             {msgType === "success" ? (
@@ -171,6 +191,20 @@ const Checkout = () => {
               ? `Total: Rs. ${Math.round(displayTotal).toLocaleString('en-IN')}`
               : paymentMessage ? paymentMessage : 'Your payment is pending admin verification.'}
           </p>
+          {msgType === "pending" && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 text-left text-sm space-y-2">
+              <p className="font-semibold text-yellow-800">Complete your payment manually:</p>
+              <p className="text-yellow-700">Send the total amount via eSewa / Bank Transfer to the number below, then contact us with your order details.</p>
+              <div className="flex items-center gap-2 text-yellow-800">
+                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                <span><strong>Phone:</strong> 9800000000</span>
+              </div>
+              <div className="flex items-center gap-2 text-yellow-800">
+                <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                <span><strong>Email:</strong> watchshop@example.com</span>
+              </div>
+            </div>
+          )}
           <button onClick={() => navigate("/product")} className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold transition-all">
             Continue Shopping
           </button>
